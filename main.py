@@ -48,9 +48,12 @@ loadImages.loadSlugImages()
 WIDTH = 800
 HEIGHT = 500
 
+# used for pyinstaller paths
+def resource_path(relative_path):
+    return str(os.path.dirname(sys.executable))+"/"+str(relative_path)
 
 window.geometry("")
-
+window.iconbitmap(resource_path("images/icon.ico"))
 
 window.title("Rain World Backups Tool")
 window.resizable(False,False)
@@ -200,9 +203,10 @@ def updateSavesList():
     
     
 
+
 def viewedSaveCreateMapButton(frame, slugName, areaCode, lastDen):
     openMapButton = tk.Button(frame, text="Open Map", command=lambda: webbrowser.open(f"https://rain-world-map.github.io/map.html?slugcat={str(slugName).lower()}&region={areaCode}&room={lastDen}"))
-    openMapButton.pack(anchor="ne", side="top")
+    openMapButton.pack(side="right")
 
 def setViewedSave(saveName):
     global viewedSave, currentSave
@@ -214,6 +218,9 @@ def setViewedSave(saveName):
     viewedSave = saveName
 
     slugCats = saveParser.getSlugCats(saveStr)
+
+    order = ["Yellow","White", "Red", "Gourmand", "Artificer", "Rivulet", "Spear", "Saint"]
+    slugCats = dict(sorted(slugCats.items(), key=lambda x: (order.index(x[0]) if x[0] in order else len(order), x[0])))
 
     for i in range(len(viewedSaveSlugsFrames)):
         viewedSaveSlugsFrames[i].destroy()
